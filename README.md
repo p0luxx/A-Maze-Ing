@@ -114,8 +114,6 @@ Un `__init__.py` define qué es visible desde fuera cuando alguien hace `import`
 
 ## 2. Tablero de tareas
 
-Formato para cada ticket en GitHub Projects/Issues: **Título / Descripción corta / Criterio de "Hecho" / Depende de**.
-
 ### 🟦 GORKA — Backend / mazegen
 
 #### Semana 1
@@ -198,7 +196,6 @@ Formato para cada ticket en GitHub Projects/Issues: **Título / Descripción cor
 ---
 
 ### 🟩 OSCAR — Frontend / ui
-*(tickets de Oscar, desde mi punto de vista)*
 
 #### Semana 1
 
