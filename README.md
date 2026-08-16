@@ -114,7 +114,7 @@ Un `__init__.py` define qué es visible desde fuera cuando alguien hace `import`
 
 ## 2. Tablero de tareas
 
-Formato para cada ticket en GitHub Projects/Issues:
+Formato para cada ticket en GitHub Projects/Issues: **Título / Descripción corta / Criterio de "Hecho" / Depende de**.
 
 ### 🟦 GORKA — Backend / mazegen
 
@@ -198,71 +198,72 @@ Formato para cada ticket en GitHub Projects/Issues:
 ---
 
 ### 🟩 OSCAR — Frontend / ui
+*(tickets de Oscar, desde mi punto de vista)*
 
 #### Semana 1
 
 **[O1] Investigación de fundamentos + acompañar diseño conjunto (G1, G2)**
-- 📄 Archivo(s): ninguno propio todavía — participo en `mazegen/grid.py` y `mazegen/strategies/base.py` como revisor/co-diseñador
-- Qué investigar en paralelo mientras Gorka avanza en profundidad en teoría de grafos: type hints, dataclasses, clases abstractas (`abc.ABC`), y específicamente para mi parte: códigos de escape ANSI para colores en terminal, y técnicas de limpiar pantalla (`os.system`, o investigar `curses` como alternativa más potente si me apetece explorarlo).
-- Cómo lo voy a afrontar para no perder tiempo: no voy a intentar entender el algoritmo de generación a fondo todavía — de momento solo necesito entender la forma de los datos que voy a recibir (una grid con celdas que tienen muros), no cómo se generan.
-- Conecta con: participo activamente en G1/G2 porque voy a consumir esa interfaz constantemente — mi input en el diseño es valioso precisamente porque veo el problema desde el lado de "qué necesito para dibujar esto fácilmente".
+- 📄 Archivo(s): ninguno propio todavía — Oscar participa en `mazegen/grid.py` y `mazegen/strategies/base.py` como revisor/co-diseñador
+- Qué tiene que investigar en paralelo mientras yo avanzo en profundidad en teoría de grafos: type hints, dataclasses, clases abstractas (`abc.ABC`), y específicamente para su parte: códigos de escape ANSI para colores en terminal, y técnicas de limpiar pantalla (`os.system`, o investigar `curses` como alternativa más potente si le apetece explorarlo).
+- Cómo lo va a afrontar para no perder tiempo: no tiene que intentar entender el algoritmo de generación a fondo todavía — de momento solo necesita entender la forma de los datos que va a recibir (una grid con celdas que tienen muros), no cómo se generan.
+- Conecta con: participa activamente en G1/G2 porque va a consumir esa interfaz constantemente — su input en el diseño es valioso precisamente porque ve el problema desde el lado de "qué necesito para dibujar esto fácilmente".
 
 **[O2] Diseñar la interfaz `Renderer` (abstracta)**
 - 📄 Archivo(s): `ui/renderer/base.py`
-- Qué investigar: cómo se define una interfaz mínima en Python con `abc.ABC` (mismo concepto que G2, así que es buen momento para consolidarlo).
-- Cómo lo voy a afrontar: voy a pensar en los verbos que necesito: `setup()`, `draw(grid, entry, exit, path=None)`, algo para manejar eventos de menú. No voy a diseñar de más — solo lo que el capítulo V pide explícitamente (regenerar, mostrar/ocultar camino, cambiar colores).
+- Qué tiene que investigar: cómo se define una interfaz mínima en Python con `abc.ABC` (mismo concepto que G2, así que es buen momento para consolidarlo).
+- Cómo lo va a afrontar: tiene que pensar en los verbos que necesita: `setup()`, `draw(grid, entry, exit, path=None)`, algo para manejar eventos de menú. No hay que diseñar de más — solo lo que el capítulo V pide explícitamente (regenerar, mostrar/ocultar camino, cambiar colores).
 - Criterio de hecho: `ui/renderer/base.py` existe con la interfaz documentada.
 - Conecta con: define el contrato que `ascii_renderer.py` va a implementar después.
 
 **[O3] Primer renderer ASCII mínimo (sin interacción todavía)**
 - 📄 Archivo(s): `ui/renderer/ascii_renderer.py` (implementa `ui/renderer/base.py`)
-- Qué investigar: cómo combinar caracteres (`-`, `|`, `+`, o los de línea Unicode `─│┌┐└┘`) para representar una cuadrícula con muros según los datos de cada celda.
-- Cómo lo voy a afrontar: no voy a esperar a que el backend esté terminado. En cuanto Gorka tenga aunque sea una `Grid` construida "a mano" (sin generación real, solo para probar), puedo empezar a dibujarla — desacoplo mi trabajo de si el algoritmo real ya funciona o no.
-- Criterio de hecho: puedo pasar una `Grid` cualquiera y se ve una representación ASCII reconocible en terminal.
-- Conecta con: en cuanto G3 (backtracker) esté listo, sustituyo la grid "hecha a mano" por una real generada.
+- Qué tiene que investigar: cómo combinar caracteres (`-`, `|`, `+`, o los de línea Unicode `─│┌┐└┘`) para representar una cuadrícula con muros según los datos de cada celda.
+- Cómo lo va a afrontar: no tiene que esperar a que el backend esté terminado. En cuanto yo tenga aunque sea una `Grid` construida "a mano" (sin generación real, solo para probar), puede empezar a dibujarla — desacopla su trabajo de si el algoritmo real ya funciona o no.
+- Criterio de hecho: puede pasar una `Grid` cualquiera y se ve una representación ASCII reconocible en terminal.
+- Conecta con: en cuanto G3 (backtracker) esté listo, sustituye la grid "hecha a mano" por una real generada.
 
 #### Semana 2
 
 **[O4] `config_loader.py` con pydantic**
 - 📄 Archivo(s): `ui/config_loader.py`
-- Qué investigar: modelos básicos de pydantic (`BaseModel`, validadores, tipos con restricciones), y cómo parsear un archivo de texto simple `CLAVE=VALOR` a un diccionario antes de pasarlo al modelo.
-- Cómo lo voy a afrontar: voy a separar el problema en dos pasos claros: (1) leer el archivo y convertirlo en un diccionario simple ignorando comentarios, (2) validar ese diccionario con un modelo pydantic que dé errores claros si falta una clave obligatoria o el tipo no es correcto.
+- Qué tiene que investigar: modelos básicos de pydantic (`BaseModel`, validadores, tipos con restricciones), y cómo parsear un archivo de texto simple `CLAVE=VALOR` a un diccionario antes de pasarlo al modelo.
+- Cómo lo va a afrontar: tiene que separar el problema en dos pasos claros: (1) leer el archivo y convertirlo en un diccionario simple ignorando comentarios, (2) validar ese diccionario con un modelo pydantic que dé errores claros si falta una clave obligatoria o el tipo no es correcto.
 - Criterio de hecho: mensajes de error entendibles para casos como archivo inexistente, clave faltante, coordenadas fuera de rango, valores no numéricos donde se esperan números.
 - Conecta con: `cli.py` lo usa como primer paso de todo el flujo del programa.
 
 **[O5] Interacciones del renderer: mostrar/ocultar camino, cambiar colores**
 - 📄 Archivo(s): `ui/renderer/ascii_renderer.py` (y probablemente `ui/cli.py` para el bucle de menú)
-- Qué investigar: cómo mantener un pequeño "estado" del programa (¿está visible el camino o no?, ¿qué color toca ahora?) entre iteraciones del menú.
-- Cómo lo voy a afrontar: voy a empezar con un menú basado en `input()` simple con opciones numeradas — no necesito nada más sofisticado, el enunciado no pide tiempo real, solo que las funciones existan.
+- Qué tiene que investigar: cómo mantener un pequeño "estado" del programa (¿está visible el camino o no?, ¿qué color toca ahora?) entre iteraciones del menú.
+- Cómo lo va a afrontar: puede empezar con un menú basado en `input()` simple con opciones numeradas — no necesita nada más sofisticado, el enunciado no pide tiempo real, solo que las funciones existan.
 - Criterio de hecho: se cumplen las 3 interacciones mínimas del capítulo V.
-- Conecta con: usa `solver.py` de Gorka (G5) para el camino, y los datos de `Grid` para el resto.
+- Conecta con: usa mi `solver.py` (G5) para el camino, y los datos de `Grid` para el resto.
 
-**[O6] Segunda strategy (Prim) — con apoyo cercano de Gorka**
+**[O6] Segunda strategy (Prim) — con mi apoyo cercano**
 - 📄 Archivo(s): `mazegen/strategies/prim.py` (mismo archivo que G8 — es el mismo ticket, lo hacemos en conjunto)
-- Como hablamos, es una buena oportunidad para que toque directamente el core del backend con guía, replicando el patrón ya establecido por `backtracker.py`. Ver ticket G8 — lo hacemos en sesión conjunta o con check-ins más frecuentes ese día concreto.
+- Es una buena oportunidad para que Oscar toque directamente el core del backend con guía, replicando el patrón ya establecido por `backtracker.py`. Ver ticket G8 — lo hacemos en sesión conjunta o con check-ins más frecuentes ese día concreto.
 
 #### Semana 3
 
 **[O7] `cli.py` — integración completa del flujo**
 - 📄 Archivo(s): `ui/cli.py` + `a_maze_ing.py` (punto de entrada raíz, que probablemente solo llama a `ui/cli.py`)
-- Qué investigar: nada nuevo técnicamente, es sobre todo orquestación de piezas ya existentes.
-- Cómo lo voy a afrontar: voy a dibujar primero el flujo como un diagrama simple (leer config → construir generator → generar → escribir archivo → mostrar → menú interactivo) antes de escribir el código, para no perder piezas.
+- Qué tiene que investigar: nada nuevo técnicamente, es sobre todo orquestación de piezas ya existentes.
+- Cómo lo va a afrontar: conviene dibujar primero el flujo como un diagrama simple (leer config → construir generator → generar → escribir archivo → mostrar → menú interactivo) antes de escribir el código, para no perder piezas.
 - Criterio de hecho: `python3 a_maze_ing.py config.txt` funciona de punta a punta.
 - Conecta con: es el punto donde backend y frontend se encuentran de verdad — buen ticket para hacer en pair programming los dos juntos.
 
 **[O8] Animación de generación en vivo (bonus)**
 - 📄 Archivo(s): `ui/renderer/ascii_renderer.py` (nuevo método tipo `draw_step`) + `ui/cli.py` (para invocarlo iterando la strategy)
-- Qué investigar: cómo consumir un generador Python (`for state in strategy.generate(...): renderer.draw(state)`) con una pequeña pausa (`time.sleep()`) entre pasos.
-- Cómo lo voy a afrontar: esto debería ser relativamente directo si la interfaz `GenerationStrategy` (G2) se diseñó bien desde el principio con `yield` — si nos cuesta mucho implementarlo, es una señal de que hay que revisar esa interfaz, no forzar el renderer.
+- Qué tiene que investigar: cómo consumir un generador Python (`for state in strategy.generate(...): renderer.draw(state)`) con una pequeña pausa (`time.sleep()`) entre pasos.
+- Cómo lo va a afrontar: esto debería ser relativamente directo si la interfaz `GenerationStrategy` (G2) se diseñó bien desde el principio con `yield` — si le cuesta mucho implementarlo, es una señal de que hay que revisar esa interfaz, no forzar el renderer.
 - Criterio de hecho: se ve el laberinto "construirse" celda a celda en terminal.
 
 **[O9] Tests de `config_loader.py` y del renderer**
 - 📄 Archivo(s): `tests/test_config_loader.py` (y podemos añadir un `tests/test_renderer.py` si nos interesa, no estaba en el árbol original pero encaja)
-- Igual que G10 pero para mi parte — no vamos a dejar los tests solo para el backend.
+- Igual que G10 pero para la parte de Oscar — no vamos a dejar los tests solo para el backend.
 
 **[O10] Makefile, `.gitignore`, LICENSE.md**
 - 📄 Archivo(s): `Makefile`, `.gitignore`, `LICENSE.md` (todos en la raíz del repo)
-- Qué investigar: sintaxis básica de Makefile (targets, dependencias entre ellos), diferencia entre licencias permisivas (MIT) y copyleft (GPL) para elegir con criterio.
+- Qué tiene que investigar: sintaxis básica de Makefile (targets, dependencias entre ellos), diferencia entre licencias permisivas (MIT) y copyleft (GPL) para elegir con criterio.
 - Criterio de hecho: los 6 comandos del capítulo III.2 funcionan.
 
 ---
