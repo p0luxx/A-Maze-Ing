@@ -15,9 +15,22 @@ class Cell():
 
 class Grid():
     def __init__(self, altura: int, anchura: int):
+        self.altura = altura
+        self.anchura = anchura
         self.grid = [[Cell() for _ in range(altura)] for _ in range(anchura)]
 
-
+    def neighbors(self, position: tuple[int, int]) -> list[tuple[int, int]]:
+        x, y = position
+        conections: list[tuple[int, int]] = []
+        if y > 0:
+            conections.append((x, y - 1))
+        if y < self.altura - 1:
+            conections.append((x, y + 1))
+        if x < self.anchura - 1:
+            conections.append((x + 1, y))
+        if x > 0:
+            conections.append((x - 1, y))
+        return conections
 """
 if __name__ == "__main__":
     celda = Cell()
