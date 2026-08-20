@@ -19,7 +19,7 @@ class Grid():
         self.anchura = anchura
         self.grid = [[Cell() for _ in range(altura)] for _ in range(anchura)]
 
-    def neighbors(self, position: tuple[int, int]) -> list[tuple[int, int]]:
+    def neighbours(self, position: tuple[int, int]) -> list[tuple[int, int]]:
         x, y = position
         conections: list[tuple[int, int]] = []
         if y > 0:
