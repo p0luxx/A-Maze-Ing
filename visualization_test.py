@@ -64,12 +64,12 @@ class ConsoleUI:
 
 def main():
     # 1. Crear una cuadrícula (ej. 15 de ancho x 10 de alto)
-    grid = Grid(altura=10, anchura=15)
+    grid = Grid(altura=5, anchura=10)
     # 2. Instanciar la interfaz y la estrategia
     ui = ConsoleUI(grid)
     strategy = IterativeBacktrackerStrategy()
     # 3. Iniciar el generador
-    generador = strategy.generate(grid, seed=888, start_gen=(12, 5))
+    generador = strategy.generate(grid, seed=42, start_gen=(0, 0))
     # 4. Animar la generación (ajusta el delay para que vaya más rápido o más lento)
     ui.animate_generation(generador, delay=0.03)
 
