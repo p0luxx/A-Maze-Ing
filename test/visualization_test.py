@@ -29,7 +29,7 @@ class ConsoleUI:
                 else:
                     mid_line += "  "
                 if current_pos and current_pos == (x, y):
-                    mid_line += "@ "
+                    mid_line += "* "
                 else:
                     mid_line += "  "
             top_line += "+"
@@ -69,7 +69,7 @@ def main():
     ui = ConsoleUI(grid)
     strategy = IterativeBacktrackerStrategy()
     # 3. Iniciar el generador
-    generador = strategy.generate(grid, seed=42, start_gen=(0, 0))
+    generador = strategy.generate(grid, seed=888, start_gen=(12, 5))
     # 4. Animar la generación (ajusta el delay para que vaya más rápido o más lento)
     ui.animate_generation(generador, delay=0.03)
 

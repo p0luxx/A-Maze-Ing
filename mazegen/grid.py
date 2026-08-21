@@ -17,7 +17,7 @@ class Grid():
     def __init__(self, altura: int, anchura: int):
         self.altura = altura
         self.anchura = anchura
-        self.grid = [[Cell() for _ in range(altura)] for _ in range(anchura)]
+        self.grid = [[Cell() for _ in range(anchura)] for _ in range(altura)]
 
     def neighbours(self, position: tuple[int, int]) -> list[tuple[int, int]]:
         x, y = position
