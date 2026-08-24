@@ -8,8 +8,8 @@ from mazegen.strategies import Grid, Walls
 
 class Renderer(ABC):
     def __init__(self, grid: Grid) -> None:
-        self.grid: Grid = grid
-
+        self.matriz: Grid = grid
+    """
     @abstractmethod
     def draw_grid(self, entry: tuple[int, int],
                   exit_: tuple[int, int],
@@ -24,6 +24,7 @@ class Renderer(ABC):
         If None, no solution path is displayed.
         """
         ...
+    """
 
     @abstractmethod
     def draw_cell(self, position: tuple[int, int]) -> None:
@@ -31,8 +32,9 @@ class Renderer(ABC):
             Args:
                 position: Coordinates of the cell to render.
         """
-        ...
+        ... """ para manyana cambiar el draw cell por el animate_generation"""
 
+    """
     @abstractmethod
     def change_walls_colors("""Debe de recibir la grid"""):
         ...
@@ -40,3 +42,4 @@ class Renderer(ABC):
     @abstractmethod
     def change_42_colors("""Debe de recibir las coordenadas del patron 42"""):
         ...
+    """
