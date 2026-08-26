@@ -3,7 +3,7 @@
             Dice que debe de poder hacer cualquier visualizador
 """
 from abc import ABC, abstractmethod
-from mazegen.strategies import Grid, Walls
+from mazegen.grid import Grid, Walls
 import os
 import time
 
@@ -18,11 +18,10 @@ class Renderer(ABC):
     
     def clear_screen(self):
         os.system("cls" if os.name == "nt" else "clear")
-        
-    """
+
     @abstractmethod
     def draw_grid(self,
-                  path: list[tuple[int, int]] | None = None
+                  path: list[tuple[int, int]] | None = None,
                   ) -> None:
         """Render the complete current state of the maze.
         Args:
@@ -30,19 +29,20 @@ class Renderer(ABC):
         If None, no solution path is displayed.
         """
         ...
-    """
 
+    """
     def live_animation(self, 
                        generator: GenerationStrategydelay,
                        delay: float = 0.05) -> None:
-        """animates step by step the generation of the maze.
+        animates step by step the generation of the maze.
            Args:
             generator: yields a new coordinate step by step
             delay: slows the animation of the maze
-        """
+        
         for step in generator:
             self.clear_screen()
             self.draw_grid()
             time.sleep(delay)
         self.clear_screen()
         self.render()
+    """
