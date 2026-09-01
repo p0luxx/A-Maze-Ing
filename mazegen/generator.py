@@ -4,7 +4,7 @@ from mazegen.encoder import MazeEncoder
 from mazegen.grid import Grid
 from mazegen.strategies.backtracker import IterativeBacktrackerStrategy
 from mazegen.strategies.base import GenerationStrategy
-
+from .solver import Solver
 # from mazegen.strategies.prim import RandomizedPrimStrategy
 # from mazegen.modes.playable import PlayableMode
 # from mazegen.pattern42 import apply_pattern42
@@ -33,7 +33,7 @@ class MazeGenerator:
         self.output_file = output_file
         self.perfect = perfect
         self.algorithm = algorithm
-        
+
         self.grid = Grid(altura=self.height, anchura=self.width)
         self.check_parameters()
 
@@ -41,11 +41,11 @@ class MazeGenerator:
         """Valida los parámetros de configuración iniciales."""
         if self.width <= 0 or self.height <= 0:
             raise ValueError("Las dimensiones deben ser mayores que cero.")
-        
+
         ex, ey = self.entry
         if not (0 <= ex < self.width and 0 <= ey < self.height):
             raise ValueError("La entrada está fuera de los límites de la cuadrícula.")
-            
+
         ox, oy = self.end
         if not (0 <= ox < self.width and 0 <= oy < self.height):
             raise ValueError("La salida está fuera de los límites de la cuadrícula.")
@@ -65,7 +65,7 @@ class MazeGenerator:
     def generate(self) -> Generator[tuple[int, int], None, None]:
         """
         Orquesta el proceso de generación cediendo (yield) los pasos intermedios.
-        
+
         Permite a la interfaz de usuario consumir el generador para animaciones.
         """
         # 1. Aplicar máscara si aplica (ej. Pattern 42)
@@ -84,12 +84,12 @@ class MazeGenerator:
     def solve_and_export(self) -> None:
         """Resuelve el laberinto y guarda el resultado en el archivo especificado."""
         # 1. Obtener la solución llamando al solver
-        #path = Solver.find_path(self.grid, self.entry, self.end) 
+        path = Solver.find_path(self.grid, self.entry, self.end)
         # 2. Guardar llamando al encoder con argumentos explícitos
         MazeEncoder.save_to_file(
             grid=self.grid,
             filepath=self.output_file,
             entry=self.entry,
             end=self.end,
-            #solution_path=path
+            solution_path=path,
         )
