@@ -4,8 +4,7 @@
 """
 from abc import ABC, abstractmethod
 from mazegen.grid import Grid, Walls
-import os
-import time
+from mazegen.strategies.base import GenerationStrategy
 
 
 class Renderer(ABC):
@@ -30,19 +29,14 @@ class Renderer(ABC):
         """
         ...
 
-    """
+    @abstractmethod
     def live_animation(self, 
-                       generator: GenerationStrategydelay,
+                       generator: GenerationStrategy,
+                        path: list[tuple[int, int]] | None = None,
                        delay: float = 0.05) -> None:
+        """
         animates step by step the generation of the maze.
            Args:
             generator: yields a new coordinate step by step
             delay: slows the animation of the maze
-        
-        for step in generator:
-            self.clear_screen()
-            self.draw_grid()
-            time.sleep(delay)
-        self.clear_screen()
-        self.render()
-    """
+        """

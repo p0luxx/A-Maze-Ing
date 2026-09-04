@@ -1,5 +1,9 @@
 from .base import Renderer
 from mazegen.grid import Grid, Walls
+from mazegen.strategies.base import GenerationStrategy
+import os
+import time
+
 
 RESET = "\033[0m"
 
@@ -9,6 +13,21 @@ EXIT_COLOR = "\033[31m"
 PATH_COLOR = "\033[33m"
 
 class ascii_renderer(Renderer):
+
+    def clear_screen(self):
+        os.system("cls" if os.name == "nt" else "clear")
+
+    def live_animation(self,
+                       generator: GenerationStrategy,
+                        path: list[tuple[int, int]] | None = None,
+                       delay: float = 0.10) -> None:
+        for step in generator:
+            self.clear_screen()
+            self.draw_grid(path)
+            time.sleep(delay)
+        self.clear_screen()
+        self.draw_grid(path)
+
     def draw_grid(self,
                   path: list[tuple[int, int]] | None = None
                   ) -> None:

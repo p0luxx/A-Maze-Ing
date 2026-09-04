@@ -94,7 +94,7 @@ def main():
 
     ui.animate_generation(
         generador,
-        delay=0.03
+        delay=0.10
     )
 
 
