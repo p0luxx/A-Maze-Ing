@@ -20,7 +20,7 @@ class MazeEncoder:
         for y in range(grid.altura):
             row_str = ""
             for x in range(grid.anchura):
-                cell = grid.grid[x][y]
+                cell = grid[x, y]
                 # cell.lista contiene el IntFlag de Walls (valor de 0 a 15)
                 row_str += cls.cell_to_hex(cell.lista.value)
             lines.append(row_str)
@@ -46,8 +46,7 @@ class MazeEncoder:
             if entry and end:
                 f.write(f"# Entry: {entry[0]},{entry[1]} | Exit: {end[0]},{end[1]}\n")
             if solution_path:
-                f.write(f"# Solution: {solution_path}\n")
-            
+                f.write(f"# Solution: {solution_path}\n") 
             # Escribir la matriz de celdas
             for line in hex_lines:
                 f.write(line + "\n")

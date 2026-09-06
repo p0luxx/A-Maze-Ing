@@ -2,14 +2,15 @@ from typing import Generator
 
 from mazegen.encoder import MazeEncoder
 from mazegen.grid import Grid
+from mazegen.pattern42 import apply_pattern42
 from mazegen.strategies.backtracker import IterativeBacktrackerStrategy
 from mazegen.strategies.base import GenerationStrategy
+
 from .solver import Solver
+
+# from mazegen.exceptions import InvalidMazeError
 # from mazegen.strategies.prim import RandomizedPrimStrategy
 # from mazegen.modes.playable import PlayableMode
-# from mazegen.pattern42 import apply_pattern42
-# from mazegen.exceptions import InvalidMazeError
-
 
 class MazeGenerator:
     """Orquestador principal para la generación y resolución de laberintos."""
@@ -69,7 +70,7 @@ class MazeGenerator:
         Permite a la interfaz de usuario consumir el generador para animaciones.
         """
         # 1. Aplicar máscara si aplica (ej. Pattern 42)
-        # apply_pattern42(self.grid)
+        apply_pattern42(self.grid)
 
         # 2. Ejecutar la estrategia de generación
         strategy = self._select_strategy()
@@ -93,3 +94,4 @@ class MazeGenerator:
             end=self.end,
             solution_path=path,
         )
+
