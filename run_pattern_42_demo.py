@@ -1,5 +1,4 @@
 import time
-
 from mazegen.grid import Grid
 from mazegen.pattern42 import apply_pattern42
 from mazegen.solver import Solver
@@ -10,8 +9,8 @@ from ui.renderer.ascii_renderer import ascii_renderer
 def main():
     # 1. Dimensiones perfectas para lucir el patrón "42"
     # El patrón es de 9x5, así que un laberinto de 15x9 deja un pasillo precioso alrededor
-    ancho = 25
-    alto = 19
+    ancho = 12
+    alto = 12
     seed = 42
     
     # 2. Puntos de entrada y salida fuera de la máscara (0,0 es perfecto)
@@ -39,7 +38,7 @@ def main():
     time.sleep(1)
     
     # 7. Mostrar la animación de generación en vivo (súper rápida)
-    renderer.live_animation(generador, path=None, delay=0.03)
+    renderer.live_animation(generador, path=None, delay=0.1)
     
     print("\n¡Laberinto con el patrón 42 generado con éxito!")
     print("Calculando la ruta de resolución...")
