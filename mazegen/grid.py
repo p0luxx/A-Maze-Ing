@@ -11,13 +11,20 @@ class Walls(IntFlag):
 class Cell():
     def __init__(self):
         self.lista = Walls(15)
+        self.blocked = False
 
 
 class Grid():
     def __init__(self, altura: int, anchura: int):
         self.altura = altura
         self.anchura = anchura
-        self.grid = [[Cell() for _ in range(altura)] for _ in range(anchura)]
+        self._grid = [[Cell() for _ in range(altura)] for _ in range(anchura)]
+
+    def __getitem__(self, position: tuple[int, int]) -> Cell:
+        x, y = position
+        if not (0 <= x < self.anchura and 0 <= y < self.altura):
+            raise IndexError ("Grid dimensions are incorrect")
+        return self._grid[x][y]
 
     def neighbours(self, position: tuple[int, int]) -> list[tuple[int, int]]:
         x, y = position

@@ -28,7 +28,7 @@ class Solver:
                 return Solver._reconstruct_path(came_from, current)
 
             cx, cy = current
-            walls = grid.grid[cx][cy].lista  # O '.walls' si lo renombraste
+            walls = grid[cx, cy].lista  # O '.walls' si lo renombraste
 
             # Evaluar vecinos accesibles: (walls & Muro) == 0 indica paso libre
             valid_moves: list[tuple[int, int]] = []

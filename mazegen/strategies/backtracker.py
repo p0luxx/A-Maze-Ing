@@ -1,7 +1,9 @@
 import random
 from collections.abc import Generator
+
+from mazegen.grid import Grid, Walls
+
 from .base import GenerationStrategy
-from mazegen.grid import Grid, Walls 
 
 
 class IterativeBacktrackerStrategy(GenerationStrategy):
@@ -16,23 +18,24 @@ class IterativeBacktrackerStrategy(GenerationStrategy):
             current = stack[-1]
             cx, cy = current
             unvisited_neighbours = [
-                n for n in grid.neighbours(current) if n not in visited
+                n for n in grid.neighbours(current)
+                if n not in visited and not grid[n].blocked
             ]
 
             if unvisited_neighbours:
                 nx, ny = random.choice(unvisited_neighbours)
-                if ny < cy:    
-                    grid.grid[cx][cy].lista &= ~Walls.norte
-                    grid.grid[nx][ny].lista &= ~Walls.sur
-                elif ny > cy:  
-                    grid.grid[cx][cy].lista &= ~Walls.sur
-                    grid.grid[nx][ny].lista &= ~Walls.norte
+                if ny < cy:  
+                    grid[cx, cy].lista &= ~Walls.norte
+                    grid[nx, ny].lista &= ~Walls.sur
+                elif ny > cy:
+                    grid[cx, cy].lista &= ~Walls.sur
+                    grid[nx, ny].lista &= ~Walls.norte
                 elif nx > cx:  
-                    grid.grid[cx][cy].lista &= ~Walls.este
-                    grid.grid[nx][ny].lista &= ~Walls.oeste
+                    grid[cx, cy].lista &= ~Walls.este
+                    grid[nx, ny].lista &= ~Walls.oeste
                 elif nx < cx:  
-                    grid.grid[cx][cy].lista &= ~Walls.oeste
-                    grid.grid[nx][ny].lista &= ~Walls.este
+                    grid[cx, cy].lista &= ~Walls.oeste
+                    grid[nx, ny].lista &= ~Walls.este
                 visited.add((nx, ny))
                 stack.append((nx, ny))
                 yield (nx, ny)
