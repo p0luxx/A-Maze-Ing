@@ -26,16 +26,16 @@ def read_config() -> tuple[bool, list[str] | OSError]:
         return (False, e)
 
 
-def conv_dict(config: list[str]) -> tuple[bool, dict[str, str] | ConfigError]:
+def conv_dict(config: list[str]) -> dict[str, str | tuple[int, int]] | ConfigError | ValueError:
     """Convert configuration lines into a key-value dictionary.
 
     Args:
         config: Configuration file lines to process.
 
     Returns:
-        A tuple containing:
-        - True and the resulting configuration dictionary if conversion succeeds.
-        - False and a ConfigError if a line does not follow the KEY=VALUE format.
+        - the resulting configuration dictionary if conversion succeeds.
+        - ConfigError if a line does not follow the KEY=VALUE format.
+        - ValueError if coordinates have an wrong format
     """
     dic: dict[str, str] = {}
     for line in config:
@@ -50,7 +50,18 @@ def conv_dict(config: list[str]) -> tuple[bool, dict[str, str] | ConfigError]:
         key = keyvalue[0].strip()
         value = keyvalue[1].strip()
         dic[key] = value
-    return (True, dic)
+    for value in ["ENTRY", "EXIT"]:
+        if value in dic:
+            coor = dic[value].split(",", 1)
+            if len(coor) == 2:
+                x, y = coor
+                try:
+                    x = int(x)
+                    y = int(y)
+                    dic[value] = (x, y)
+                except ValueError:
+                    raise
+    return dic
 
 """
 No se si process config deba de imprimir nada o solo devolver cosas 
@@ -65,9 +76,11 @@ def process_config() -> dict[str | str] | None:
         return conv_dict(read[1])
     except ConfigError as e:
         print(e)
+    except ValueError as e:
+        print(e)
 
-"""
-main de prueba
+
+#main de prueba
 
 def main() -> None:
     result = process_config()
@@ -81,4 +94,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-"""
+

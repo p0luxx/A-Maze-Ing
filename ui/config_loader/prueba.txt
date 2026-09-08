@@ -1,14 +1,14 @@
 # Maze configuration
 WIDTH=20
 HEIGHT=15
-ENTRY=0,0
+ENTRY=0,0,4
 EXIT=19,14
 OUTPUT_FILE=maze.txt
 PERFECT=True
 
   Hola=++=30==
 ==HEIGHT=15 ==
-HENTRY==== 0,0
+HENTRY==== 0,0,9
 HEXIT=  19==,14
 PEdro+=True
 
