@@ -54,7 +54,7 @@ class ascii_renderer(Renderer):
                   ) -> None:
         # El borde oeste (izquierdo) de la primera columna
         if matriz[0, y].lista & Walls.oeste:
-            print(self._paint("┃", self.wall_color), end="")
+            print(self._paint("┃", self.wall_color.value), end="")
         else:
             print(" ", end="")
 
@@ -70,7 +70,7 @@ class ascii_renderer(Renderer):
             )
 
             if celda.lista & Walls.este:
-                print(self._paint("┃", self.wall_color), end="")
+                print(self._paint("┃", self.wall_color.value), end="")
             else:
                 print(" ", end="")
 
@@ -80,16 +80,16 @@ class ascii_renderer(Renderer):
         # y es siempre 0 (muro superior externo)
         for x in range(matriz.anchura):
             joint = self._get_joint_at(matriz, x, 0)
-            print(self._paint(joint, self.wall_color), end="")
+            print(self._paint(joint, self.wall_color.value), end="")
             
             celda = matriz[x, 0]
             if celda.lista & Walls.norte:
-                print(self._paint("━━━", self.wall_color), end="")
+                print(self._paint("━━━", self.wall_color.value), end="")
             else:
                 print("   ", end="")
                 
         last_joint = self._get_joint_at(matriz, matriz.anchura, 0)
-        print(self._paint(last_joint, self.wall_color))
+        print(self._paint(last_joint, self.wall_color.value))
 
     def _draw_middle_wall(self, matriz: Grid, y: int) -> None:
         if y >= matriz.altura - 1:
@@ -97,31 +97,31 @@ class ascii_renderer(Renderer):
             
         for x in range(matriz.anchura):
             joint = self._get_joint_at(matriz, x, y + 1)
-            print(self._paint(joint, self.wall_color), end="")
+            print(self._paint(joint, self.wall_color.value), end="")
             
             celda = matriz[x, y]
             if celda.lista & Walls.sur:
-                print(self._paint("━━━", self.wall_color), end="")
+                print(self._paint("━━━", self.wall_color.value), end="")
             else:
                 print("   ", end="")
                 
         last_joint = self._get_joint_at(matriz, matriz.anchura, y + 1)
-        print(self._paint(last_joint, self.wall_color))
+        print(self._paint(last_joint, self.wall_color.value))
 
     def _draw_bottom_wall(self, matriz: Grid) -> None:
         y_last = matriz.altura
         for x in range(matriz.anchura):
             joint = self._get_joint_at(matriz, x, y_last)
-            print(self._paint(joint, self.wall_color), end="")
+            print(self._paint(joint, self.wall_color.value), end="")
             
             celda = matriz[x, matriz.altura - 1]
             if celda.lista & Walls.sur:
-                print(self._paint("━━━", self.wall_color), end="")
+                print(self._paint("━━━", self.wall_color.value), end="")
             else:
                 print("   ", end="")
                 
         last_joint = self._get_joint_at(matriz, matriz.anchura, y_last)
-        print(self._paint(last_joint, self.wall_color))
+        print(self._paint(last_joint, self.wall_color.value))
 
     def _draw_cell_content(self,
                             x: int,
@@ -213,5 +213,5 @@ class ascii_renderer(Renderer):
 
         return joints.get(connections, " ")
 
-    def _paint(self, text: str, color: str) -> str:
+    def _paint(self, text: str, color: str | Renderer) -> str:
         return f"{color}{text}{RESET}"

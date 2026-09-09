@@ -17,10 +17,10 @@ class WallColor(str, Enum):
 class Renderer(ABC):
     def __init__(self, grid: Grid, 
                  entry: tuple[int, int],
-                 exit_: tuple[int, int]) -> None:
+                 exit: tuple[int, int]) -> None:
         self.matriz: Grid = grid
         self.entry: tuple[int, int] = entry
-        self.exit: tuple[int, int] = exit_
+        self.exit: tuple[int, int] = exit
         self.wall_color: WallColor = WallColor.CYAN
     
     def clear_screen(self):
@@ -49,8 +49,8 @@ class Renderer(ABC):
             delay: slows the animation of the maze
         """
 
-    def ChangeColor(self) -> str:
-        colors: list[WallColor] = [WallColor]
-        current = colors.index[self.wall_colors]
+    def ChangeColor(self) -> None:
+        colors: list[WallColor] = list(WallColor)
+        current = colors.index(self.wall_color)
         next_color = (current + 1) % len(colors)
-        self.wall_colors = colors[next_color]
+        self.wall_color = colors[next_color]

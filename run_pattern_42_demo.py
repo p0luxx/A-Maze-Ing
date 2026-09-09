@@ -53,6 +53,7 @@ def main():
     print("--- ANIMACIÓN DE RESOLUCIÓN ---")
     for i in range(1, len(path) + 1):
         renderer.clear_screen()
+        renderer.ChangeColor()
         print("--- BUSCANDO LA SALIDA ALREDEDOR DEL 42 ---")
         renderer.draw_grid(path=path[:i])
         time.sleep(0.05)
