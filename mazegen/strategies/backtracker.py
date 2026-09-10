@@ -43,3 +43,11 @@ class IterativeBacktrackerStrategy(GenerationStrategy):
                 stack.pop()
                 if stack:
                     yield stack[-1]
+
+
+class Prim(GenerationStrategy):
+    def generate(
+            self, grid: Grid, seed: int, start_gen: tuple[int, int]
+            ) -> Generator[tuple[int, int], None, None]
+        random.seed(seed)
+            
