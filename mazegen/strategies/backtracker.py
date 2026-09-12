@@ -94,12 +94,12 @@ class Prim(GenerationStrategy):
         available_neighbours: list[tuple[int, int]] = []
         yield start_gen
         while active_candidates:
-            current = active_candidates[-1]
             available_neighbours.extend(
-                n for n in grid.neighbours(current)
+                n for n in grid.neighbours(active_candidates[-1])
                 if n not in visited and not grid[n].blocked)
             if available_neighbours:
-                x, y = random.choice(available_neighbours)
+                current: tuple[int, int] = random.choice(available_neighbours)
+                x, y = current
                 if (x, y - 1) in visited:
                     grid[x, y -1].lista &= ~Walls.sur
                     grid[x, y].lista &= ~Walls.norte
@@ -112,12 +112,12 @@ class Prim(GenerationStrategy):
                 elif (x + 1, y) in visited:
                     grid[x, y].lista &= ~Walls.este
                     grid[x + 1, y].lista &= ~Walls.oeste
-            #continuarra!
-
-                    
-                    
-                
-            
+            available_neighbours.remove(current)
+            visited.add(current)
+            active_candidates.append(current)
+            yield current
             else:
                 active_candidates.pop()
-            
+                """
+                if stack:
+                    yield stack[-1] esta parte tengo que pensarla"""
