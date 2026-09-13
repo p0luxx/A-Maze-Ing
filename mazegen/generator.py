@@ -2,15 +2,15 @@ from typing import Generator
 
 from mazegen.encoder import MazeEncoder
 from mazegen.grid import Grid
+
+# from mazegen.strategies.prim import RandomizedPrimStrategy
+from mazegen.modes.playable import PlayableMode
 from mazegen.pattern42 import apply_pattern42
 from mazegen.strategies.backtracker import IterativeBacktrackerStrategy
 from mazegen.strategies.base import GenerationStrategy
 
 from .solver import Solver
 
-# from mazegen.exceptions import InvalidMazeError
-# from mazegen.strategies.prim import RandomizedPrimStrategy
-# from mazegen.modes.playable import PlayableMode
 
 class MazeGenerator:
     """Orquestador principal para la generación y resolución de laberintos."""
@@ -79,10 +79,9 @@ class MazeGenerator:
 
         # 3. Aplicar post-procesado según el modo (perfect vs playable)
         if not self.perfect:
-            # PlayableMode.apply(self.grid, seed=self.seed)
-            pass
+            PlayableMode.apply(self.grid, seed=self.seed)
 
-    def solve_and_export(self) -> None:
+    def solve_and_export(self) -> list[tuple[int, int]]:
         """Resuelve el laberinto y guarda el resultado en el archivo especificado."""
         # 1. Obtener la solución llamando al solver
         path = Solver.find_path(self.grid, self.entry, self.end)
@@ -94,4 +93,5 @@ class MazeGenerator:
             end=self.end,
             solution_path=path,
         )
+        return path
 
