@@ -8,9 +8,9 @@ class ConfigError(Exception):
 
 
 class Algorithm(str, Enum):
-    DFS = "dfs"
-    PRIM = "prim"
-    RDFS = "rdfs"
+    DFS = "DFS"
+    PRIM = "PRIM"
+    RDFS = "RDFS"
 
 
 class ConfigVal(BaseModel):
