@@ -27,6 +27,7 @@ def main() -> None:
         entry=config.entry,
         end=config.exit,
         output_file=config.output_file,
+        algorithm=config.algorithm,
         perfect=config.perfect,
     )
 
@@ -39,7 +40,7 @@ def main() -> None:
     renderer.clear_screen()
     print("Iniciando generación animada...")
     time.sleep(0.5)
-    renderer.live_animation(maze_gen.generate(), path=None, delay=0.01)
+    renderer.live_animation(maze_gen.generate(), path=None, delay=0.05)
     print("\n¡Laberinto generado con éxito!")
 
     path = maze_gen.solve_and_export()
@@ -69,10 +70,11 @@ def main() -> None:
                     entry=config.entry,
                     end=config.exit,
                     output_file=config.output_file,
+                    algorithm=config.algorithm,
                     perfect=config.perfect,
                 )
                 renderer.matriz = maze_gen.grid
-                renderer.live_animation(maze_gen.generate(), path=None, delay=0.01)
+                renderer.live_animation(maze_gen.generate(), path=None, delay=0.05)
 
                 path = maze_gen.solve_and_export()
                 show_path = False

@@ -6,7 +6,7 @@ from mazegen.grid import Grid
 # from mazegen.strategies.prim import RandomizedPrimStrategy
 from mazegen.modes.playable import PlayableMode
 from mazegen.pattern42 import apply_pattern42
-from mazegen.strategies.backtracker import IterativeBacktrackerStrategy
+from mazegen.strategies.backtracker import IterativeBacktrackerStrategy, Prim, RandomIterativeBacktrackerStrategy
 from mazegen.strategies.base import GenerationStrategy
 
 from .solver import Solver
@@ -33,7 +33,7 @@ class MazeGenerator:
         self.end = end
         self.output_file = output_file
         self.perfect = perfect
-        self.algorithm = algorithm
+        self.algorithm = algorithm.lower()
 
         self.grid = Grid(altura=self.height, anchura=self.width)
         self.check_parameters()
@@ -58,8 +58,10 @@ class MazeGenerator:
         """Selecciona la estrategia de generación según el algoritmo indicado."""
         if self.algorithm == "backtracker":
             return IterativeBacktrackerStrategy()
-        # elif self.algorithm == "prim":
-        #     return RandomizedPrimStrategy()
+        elif self.algorithm == "prim":
+             return Prim()
+        elif self.algorithm =="rdfs":
+            return RandomIterativeBacktrackerStrategy()
         else:
             raise ValueError(f"Algoritmo desconocido: {self.algorithm}")
 
