@@ -1,10 +1,16 @@
 from sys import argv
-
+from enum import Enum
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
 
 class ConfigError(Exception):
     """Represent errors caused by invalid configuration syntax."""
+
+
+class Algorithm(str, Enum):
+    DFS = "DFS"
+    PRIM = "PRIM"
+    RDFS = "RDFS"
 
 
 class ConfigVal(BaseModel):
@@ -17,6 +23,7 @@ class ConfigVal(BaseModel):
     output_file: str = Field(alias="OUTPUT_FILE")
     perfect: bool = Field(alias="PERFECT")
     seed: int | None = Field(default=None, alias="SEED")
+    algorithm: Algorithm = Field(alias="ALGORITHM")
 
     @model_validator(mode="after")
     def validate_coordinates(self) -> "ConfigVal":
