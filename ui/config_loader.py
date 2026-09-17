@@ -16,8 +16,8 @@ class Algorithm(str, Enum):
 class ConfigVal(BaseModel):
     """Represent and validate maze configuration data."""
 
-    width: int = Field(alias="WIDTH", ge=11, le=30)
-    height: int = Field(alias="HEIGHT", ge=7, le=30)
+    width: int = Field(alias="WIDTH", ge=11, le=42)
+    height: int = Field(alias="HEIGHT", ge=7, le=42)
     entry: tuple[int, int] = Field(alias="ENTRY")
     exit: tuple[int, int] = Field(alias="EXIT")
     output_file: str = Field(alias="OUTPUT_FILE")
