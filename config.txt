@@ -1,6 +1,3 @@
-
-#hola que pasa
-
 WIDTH=20
 HEIGHT=20
 ENTRY=2,2
@@ -8,5 +5,4 @@ EXIT=14,14
 OUTPUT_FILE=maze.txt
 PERFECT=False
 SEED=42
-ALGORITHM=RDFS
-
+ALGORITHM=DFS
