@@ -99,12 +99,3 @@ def main() -> None:
             case _:
                 renderer.clear_screen()
                 print("Opción no válida. Por favor introduce un número del 1 al 4.")
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt as e:
-        print (e)
-    except EOFError as e:
-        print(e)
