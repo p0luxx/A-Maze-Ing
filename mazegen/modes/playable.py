@@ -4,11 +4,11 @@ from mazegen.grid import Grid, Walls
 
 
 class PlayableMode:
-    """Transforma un laberinto perfecto en uno imperfecto (braided).
+    """Transforms a perfect maze into an imperfect (braided) one.
 
-    Elimina callejones sin salida (dead-ends) derribando muros al azar hacia
-    vecinos transitables, generando ciclos alternativos que facilitan la
-    jugabilidad y evitan frustración al explorar.
+    Eliminates dead ends by randomly removing walls into traversable
+    neighboring cells, creating alternative loops that improve gameplay and
+    prevent frustration during exploration.
     """
 
     OPPOSITE_WALL = {
@@ -27,16 +27,16 @@ class PlayableMode:
 
     @staticmethod
     def apply(grid: Grid, seed: int | None = None) -> None:
-        """Detecta celdas sin salida y derriba una pared para crear bucles.
+        """Detect dead-end cells and knock down a wall to create loops.
 
-        Recorre la cuadrícula identificando celdas con exactamente tres paredes
-        activas (callejones sin salida). Para cada una, selecciona al azar un
-        muro colindante con una celda navegable dentro de los límites y actualiza
-        las bitmasks de ambas celdas para abrir el paso.
+        Traverse the grid, identifying cells with exactly three active walls
+        (dead ends). For each one, randomly select a wall adjacent to an
+        in-bounds, navigable cell and update the bitmasks for both cells
+        to open the passage.
 
         Args:
-            grid: Instancia de la cuadrícula a modificar in-place.
-            seed: Semilla opcional para reproducir la selección de muros derribados.
+            grid: Instance of the grid to be modified in-place.
+            seed: Optional seed to reproduce the selection of demolished walls.
         """
         if seed is not None:
             random.seed(seed)
@@ -47,23 +47,34 @@ class PlayableMode:
                 if celda.blocked:
                     continue
 
-                # Recopila paredes cerradas que dan a celdas transitables dentro del mapa
+                # Collects closed walls facing traversable cells in the map.
                 muros_cerrados = []
-                for wall_flag, (dx, dy) in PlayableMode.DIRECTION_OFFSETS.items():
+                for wall_flag, (dx, dy) in (
+                    PlayableMode.DIRECTION_OFFSETS.items()
+                ):
                     nx, ny = x + dx, y + dy
-                    if (celda.lista & wall_flag) and (0 <= nx < grid.anchura and 0 <= ny < grid.altura):
+                    in_bounds = (
+                        0 <= nx < grid.anchura and 0 <= ny < grid.altura
+                    )
+                    if (celda.lista & wall_flag) and in_bounds:
                         if not grid[nx, ny].blocked:
                             muros_cerrados.append((wall_flag, nx, ny))
 
-                # Un dead-end tiene exactamente 3 muros activos (1 sola salida)
+                # A dead-end has exactly 3 active walls (a single exit).
                 total_muros_activos = sum(
-                    1 for w in (Walls.norte, Walls.sur, Walls.este, Walls.oeste)
+                    1
+                    for w in (Walls.norte, Walls.sur, Walls.este, Walls.oeste)
                     if celda.lista & w
                 )
 
-                if total_muros_activos == 3 and muros_cerrados:
+                if (
+                    total_muros_activos == 3
+                    and muros_cerrados
+                ):
                     wall_to_remove, nx, ny = random.choice(muros_cerrados)
 
-                    # Apertura bidireccional mediante operaciones a nivel de bits
+                    # Bidirectional opening using bitwise operations
                     celda.lista &= ~wall_to_remove
-                    grid[nx, ny].lista &= ~PlayableMode.OPPOSITE_WALL[wall_to_remove]
+                    grid[nx, ny].lista &= ~PlayableMode.OPPOSITE_WALL[
+                        wall_to_remove
+                    ]

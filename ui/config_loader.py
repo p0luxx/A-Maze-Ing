@@ -1,5 +1,7 @@
-from sys import argv
 from enum import Enum
+from sys import argv
+
+from mypyc import lower
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
 
@@ -8,9 +10,9 @@ class ConfigError(Exception):
 
 
 class Algorithm(str, Enum):
-    DFS = "DFS"
     PRIM = "PRIM"
     RDFS = "RDFS"
+    BACKTRACKER = "BACKTRACKER"
 
 
 class ConfigVal(BaseModel):
@@ -168,25 +170,3 @@ def process_config() -> ConfigVal | None:
         print(error)
 
     return None
-
-
-""" RECORDAR BORRAR
-def main() -> None:
-    config = process_config()
-
-    if config is None:
-        return
-
-    print("Configuration validated")
-    print(f"WIDTH: {config.width}")
-    print(f"HEIGHT: {config.height}")
-    print(f"ENTRY: {config.entry}")
-    print(f"EXIT: {config.exit}")
-    print(f"OUTPUT_FILE: {config.output_file}")
-    print(f"PERFECT: {config.perfect}")
-    print(f"SEED: {config.seed}")
-
-
-if __name__ == "__main__":
-    main()
-"""

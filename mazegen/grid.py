@@ -23,7 +23,7 @@ class Grid():
     def __getitem__(self, position: tuple[int, int]) -> Cell:
         x, y = position
         if not (0 <= x < self.anchura and 0 <= y < self.altura):
-            raise IndexError ("Grid dimensions are incorrect")
+            raise IndexError("Grid dimensions are incorrect")
         return self._grid[x][y]
 
     def neighbours(self, position: tuple[int, int]) -> list[tuple[int, int]]:
@@ -38,19 +38,3 @@ class Grid():
         if x > 0:
             conections.append((x - 1, y))
         return conections
-"""
-if __name__ == "__main__":
-    celda = Cell()
-    print(celda.lista)
-    print("Norte -> ", Walls.norte in celda.lista)
-    print("Este -> ", Walls.este in celda.lista)
-    print("Sur -> ", Walls.sur in celda.lista)
-    print("Oeste -> ", Walls.oeste in celda.lista)
-    print("\n\n")
-    Matriz = Grid(2,2)
-    print(Matriz)
-    print("\n\n")
-    for fila in Matriz.grid:
-        for cell in fila:
-            print(cell.lista)
-"""

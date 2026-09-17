@@ -1,1 +1,36 @@
-a
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mazegen"
+version = "1.0.0"
+description = "A procedural maze generation and solving library"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "gorkgall" },
+  { name = "osuarez-" },
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+]
+
+[tool.setuptools.packages.find]
+include = ["mazegen*"]
+
+[tool.flake8]
+max-line-length = 120
+exclude = [
+    ".venv",
+    "__pycache__",
+    ".git",
+]
+
+[tool.mypy]
+python_version = "3.13"
+ignore_missing_imports = true
+explicit_package_bases = true
+namespace_packages = true
+exclude = ["^\\.venv/", "^venv/"]

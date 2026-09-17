@@ -7,7 +7,7 @@ from mazegen.grid import Grid
 
 
 class WallColor(str, Enum):
-    """Paleta de códigos de escape ANSI para colorear muros en terminal."""
+    """Palette of ANSI escape codes for coloring walls in the terminal."""
 
     CYAN = "\033[36m"
     RED = "\033[31m"
@@ -18,26 +18,31 @@ class WallColor(str, Enum):
 
 
 class Renderer(ABC):
-    """Interfaz base abstracta para los motores de renderizado del laberinto.
+    """Abstract base interface for maze rendering engines.
 
-    Define el contrato obligatorio para dibujar el tablero y animar algoritmos
-    paso a paso, además de centralizar el control de color de las paredes y la
-    limpieza de la consola.
+    Defines the required contract for drawing the board and animating
+    algorithms step by step, while centralizing wall-color control and
+    console cleanup.
 
     Attributes:
-        matriz: Cuadrícula (`Grid`) con las celdas y muros actuales.
-        entry: Coordenadas `(x, y)` del punto de inicio.
-        exit: Coordenadas `(x, y)` del punto de salida.
-        wall_color: Color ANSI activo para las paredes.
+        matriz: Grid with the current cells and walls.
+        entry: Coordinates `(x, y)` of the starting point.
+        exit: Coordinates `(x, y)` of the exit point.
+        wall_color: Active ANSI color for the walls.
     """
 
-    def __init__(self, grid: Grid, entry: tuple[int, int], exit: tuple[int, int]) -> None:
-        """Inicializa el renderizador con la cuadrícula base y los extremos.
+    def __init__(
+        self,
+        grid: Grid,
+        entry: tuple[int, int],
+        exit: tuple[int, int],
+    ) -> None:
+        """Initialize the renderer with the base grid and endpoints.
 
         Args:
-            grid: Tablero con las celdas y paredes a representar.
-            entry: Tupla `(x, y)` con el origen.
-            exit: Tupla `(x, y)` con el destino.
+            grid: Board with the cells and walls to represent.
+            entry: Tuple `(x, y)` for the origin.
+            exit: Tuple `(x, y)` for the destination.
         """
         self.matriz: Grid = grid
         self.entry: tuple[int, int] = entry
@@ -45,15 +50,16 @@ class Renderer(ABC):
         self.wall_color: WallColor = WallColor.CYAN
 
     def clear_screen(self) -> None:
-        """Limpia el búfer visible de la terminal según la plataforma."""
+        """Clears the visible terminal buffer according to the platform."""
         os.system("cls" if os.name == "nt" else "clear")
 
     @abstractmethod
     def draw_grid(self, path: list[tuple[int, int]] | None = None) -> None:
-        """Renderiza una vista estática del laberinto en su estado vigente.
+        """Render a static view of the maze in its current state.
 
         Args:
-            path: Lista secuencial opcional de coordenadas a resaltar como solución.
+            path: Optional sequential list of coordinates to highlight as a
+                solution.
         """
         ...
 
@@ -64,17 +70,18 @@ class Renderer(ABC):
         path: list[tuple[int, int]] | None = None,
         delay: float = 0.05,
     ) -> None:
-        """Consume un generador para dibujar y refrescar cada paso en pantalla.
+        """Consume a generator to draw and refresh each step on screen.
 
         Args:
-            generator: Iterador que produce las coordenadas procesadas por el algoritmo.
-            path: Ruta opcional a superponer durante la animación.
-            delay: Intervalo de pausa en segundos entre cada fotograma.
+            generator: Iterator producing the coordinates processed by the
+                algorithm.
+            path: Optional route to overlay during the animation.
+            delay: Pause interval in seconds between each frame.
         """
         ...
 
     def ChangeColor(self) -> None:
-        """Avanza cíclicamente a la siguiente paleta de color definida en `WallColor`."""
+        """Cycle to the next color palette defined in `WallColor`."""
         colors: list[WallColor] = list(WallColor)
         current = colors.index(self.wall_color)
         next_color = (current + 1) % len(colors)

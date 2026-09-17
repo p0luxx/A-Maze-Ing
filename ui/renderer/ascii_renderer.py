@@ -2,7 +2,7 @@ import os
 import time
 from collections.abc import Generator
 
-from mazegen.grid import Grid, Walls
+from mazegen.grid import Walls
 from ui.renderer.base import Renderer, WallColor
 
 RESET = "\033[0m"
@@ -10,7 +10,7 @@ ENTRY_COLOR = "\033[32m"
 EXIT_COLOR = "\033[31m"
 PATH_COLOR = "\033[33m"
 
-# Mapeo cromático para contrastar el logotipo central frente al color de los muros
+# Color mapping to contrast the central logo against the wall color
 COMPLEMENTARY_COLORS = {
     WallColor.CYAN: WallColor.RED,
     WallColor.RED: WallColor.CYAN,
@@ -22,27 +22,28 @@ COMPLEMENTARY_COLORS = {
 
 
 class ascii_renderer(Renderer):
-    """Renderizador por terminal con resolución estricta de bordes y caracteres box-drawing.
+    """Terminal renderer with strict border resolution and box-drawing.
 
-    Dibuja la cuadrícula asegurando que los límites perimetrales queden siempre
-    cerrados. Maneja las fronteras entre pasillos transitables y el logotipo
-    central como muros estructurales estándar, rellenando con bloques continuos
-    únicamente el interior puro de las celdas bloqueadas.
+    Draws the grid while keeping the perimeter boundaries always closed.
+    Handles the boundaries between walkable corridors and the central logo as
+    standard structural walls, filling only the pure interior of blocked cells
+    with continuous blocks.
     """
 
     def clear_screen(self) -> None:
-        """Limpia el búfer visible de la consola según la plataforma."""
+        """Clears the visible console buffer according to the platform."""
         os.system("cls" if os.name == "nt" else "clear")
 
     def is_blocked(self, x: int, y: int) -> bool:
-        """Comprueba si una celda está bloqueada respetando los límites de la matriz.
+        """Checks whether a cell is blocked while respecting matrix boundaries.
 
         Args:
-            x: Coordenada horizontal (columna).
-            y: Coordenada vertical (fila).
+            x: Horizontal coordinate (column).
+            y: Vertical coordinate (row).
 
         Returns:
-            `True` si la celda existe y tiene la propiedad `blocked`, `False` en caso contrario.
+            `True` if the cell exists and has the `blocked` property,
+            otherwise `False`.
         """
         if 0 <= x < self.matriz.anchura and 0 <= y < self.matriz.altura:
             return self.matriz[x, y].blocked
@@ -54,12 +55,13 @@ class ascii_renderer(Renderer):
         path: list[tuple[int, int]] | None = None,
         delay: float = 0.05,
     ) -> None:
-        """Consume un generador paso a paso para refrescar la visualización en tiempo real.
+        """Consume a generator to refresh the display in real time.
 
         Args:
-            generator: Iterador que emite tuplas de coordenadas durante el algoritmo.
-            path: Lista opcional de coordenadas a sobreimprimir como solución.
-            delay: Pausa en segundos entre fotogramas para regular la velocidad.
+            generator: Iterator yielding coordinate tuples during the
+                algorithm.
+            path: Optional list of coordinates to overlay as the solution.
+            delay: Pause in seconds between frames to regulate speed.
         """
         for _ in generator:
             self.clear_screen()
@@ -69,10 +71,10 @@ class ascii_renderer(Renderer):
         self.draw_grid(path)
 
     def draw_grid(self, path: list[tuple[int, int]] | None = None) -> None:
-        """Renderiza en stdout el laberinto completo con sus bordes, divisiones y celdas.
+        """Render the complete maze to stdout with its borders and cells.
 
         Args:
-            path: Camino resuelto a resaltar sobre el trazado.
+            path: Solved path to highlight on the drawing.
         """
         path_set = set(path) if path is not None else set()
 
@@ -84,7 +86,7 @@ class ascii_renderer(Renderer):
         self._draw_bottom_wall()
 
     def _draw_horizontal_wall(self, y: int) -> None:
-        """Dibuja el borde horizontal continuo de la parte superior del tablero."""
+        """Draws the continuous horizontal top border of the board."""
         for x in range(self.matriz.anchura):
             joint = self._get_joint_at(x, 0)
             print(joint, end="")
@@ -93,7 +95,7 @@ class ascii_renderer(Renderer):
         print(last_joint)
 
     def _draw_bottom_wall(self) -> None:
-        """Dibuja el cierre horizontal continuo de la base del tablero."""
+        """Draws the continuous horizontal closing wall at the board base."""
         y_last = self.matriz.altura
         for x in range(self.matriz.anchura):
             joint = self._get_joint_at(x, y_last)
@@ -103,20 +105,22 @@ class ascii_renderer(Renderer):
         print(last_joint)
 
     def _draw_row(self, y: int, path_set: set[tuple[int, int]]) -> None:
-        """Renderiza una fila horizontal de celdas y gestiona sus divisiones verticales este-oeste.
+        """Renders one horizontal row of cells and manages east-west dividers.
 
-        Diferencia tres casos entre columnas adyacentes:
-        - Ambas bloqueadas: bloque sólido de relleno continuo (`█`).
-        - Transición pasillo/bloqueo: muro regular divisorio (`┃`).
-        - Pasillos abiertos: consulta de pared activa en la celda.
+        Distinguishes three cases between adjacent columns:
+        - Both blocked: solid continuous fill block (`█`).
+        - Corridor/block transition: regular divider wall (`┃`).
+        - Open corridors: checks the active wall in the cell.
 
         Args:
-            y: Índice de la fila a dibujar.
-            path_set: Conjunto de coordenadas pertenecientes a la ruta óptima.
+            y: Index of the row to draw.
+            path_set: Set of coordinates belonging to the optimal path.
         """
-        pattern_color = COMPLEMENTARY_COLORS.get(self.wall_color, WallColor.RED).value
+        pattern_color = (
+            COMPLEMENTARY_COLORS.get(self.wall_color, WallColor.RED).value
+        )
 
-        # El perímetro exterior izquierdo es un muro estructural invariable
+        # The left outer perimeter is an invariant structural wall.
         print(self._paint("┃", self.wall_color.value), end="")
 
         for x in range(self.matriz.anchura):
@@ -141,11 +145,14 @@ class ascii_renderer(Renderer):
         print()
 
     def _draw_middle_wall(self, y: int) -> None:
-        """Dibuja las divisiones horizontales entre la fila `y` e `y + 1`.
+        """Draw the horizontal divisions between rows `y` and `y + 1`.
 
-        Resuelve visualmente las transiciones norte-sur entre celdas bloqueadas y transitables.
+        Visually resolves north-south transitions between blocked and
+        traversable cells.
         """
-        pattern_color = COMPLEMENTARY_COLORS.get(self.wall_color, WallColor.RED).value
+        pattern_color = (
+            COMPLEMENTARY_COLORS.get(self.wall_color, WallColor.RED).value
+        )
 
         for x in range(self.matriz.anchura):
             joint = self._get_joint_at(x, y + 1)
@@ -167,9 +174,16 @@ class ascii_renderer(Renderer):
         last_joint = self._get_joint_at(self.matriz.anchura, y + 1)
         print(last_joint)
 
-    def _draw_cell_content(self, x: int, y: int, path_set: set[tuple[int, int]]) -> None:
-        """Imprime el relleno central de 3 caracteres de la celda según prioridades de estado."""
-        pattern_color = COMPLEMENTARY_COLORS.get(self.wall_color, WallColor.RED).value
+    def _draw_cell_content(
+        self,
+        x: int,
+        y: int,
+        path_set: set[tuple[int, int]],
+    ) -> None:
+        """Print the central 3-character fill for a cell based on state."""
+        pattern_color = (
+            COMPLEMENTARY_COLORS.get(self.wall_color, WallColor.RED).value
+        )
         celda = self.matriz[x, y]
 
         if celda.blocked:
@@ -184,29 +198,49 @@ class ascii_renderer(Renderer):
             print("   ", end="")
 
     def _get_joint_at(self, jx: int, jy: int) -> str:
-        """Determina la pieza ortogonal (`+`, `T`, esquinas o relleno) para el cruce `(jx, jy)`.
+        """Determine the orthogonal section for junction `(jx, jy)`.
 
-        Solo dibuja relleno sólido `█` si el nodo está completamente contenido en el interior
-        estricto del patrón bloqueado (las 4 esquinas incidentes bloqueadas y sin tocar los bordes
-        del mapa). En caso contrario, comprueba la conectividad en las cuatro direcciones
-        cardinales para resolver el glifo box-drawing apropiado.
+        Only draws a solid fill `█` when the node is completely inside the
+        strict blocked pattern area (all 4 incident corners blocked and not
+        touching the map edges). Otherwise, it checks connectivity in the four
+        cardinal directions to resolve the appropriate box-drawing glyph.
 
         Args:
-            jx: Coordenada horizontal del nodo (0 a anchura).
-            jy: Coordenada vertical del nodo (0 a altura).
+            jx: Horizontal coordinate of the node (0 to width).
+            jy: Vertical coordinate of the node (0 to height).
 
         Returns:
-            Cadena coloreada con el glifo calculado.
+            A colored string with the computed glyph.
         """
-        pattern_color = COMPLEMENTARY_COLORS.get(self.wall_color, WallColor.RED).value
+        pattern_color = (
+            COMPLEMENTARY_COLORS.get(self.wall_color, WallColor.RED).value
+        )
 
-        top_left = self.is_blocked(jx - 1, jy - 1) if (jx > 0 and jy > 0) else False
-        top_right = self.is_blocked(jx, jy - 1) if (jx < self.matriz.anchura and jy > 0) else False
-        bottom_left = self.is_blocked(jx - 1, jy) if (jx > 0 and jy < self.matriz.altura) else False
-        bottom_right = self.is_blocked(jx, jy) if (jx < self.matriz.anchura and jy < self.matriz.altura) else False
+        top_left = (
+            self.is_blocked(jx - 1, jy - 1) if (jx > 0 and jy > 0) else False
+        )
+        top_right = (
+            self.is_blocked(jx, jy - 1)
+            if (jx < self.matriz.anchura and jy > 0)
+            else False
+        )
+        bottom_left = (
+            self.is_blocked(jx - 1, jy)
+            if (jx > 0 and jy < self.matriz.altura)
+            else False
+        )
+        bottom_right = (
+            self.is_blocked(jx, jy)
+            if (jx < self.matriz.anchura and jy < self.matriz.altura)
+            else False
+        )
 
-        # El bloque macizo solo se dibuja si el cruce es 100% interno a la máscara
-        if 0 < jx < self.matriz.anchura and 0 < jy < self.matriz.altura:
+        # Solid block drawn only when the junction is completely inside
+        # the mask.
+        if (
+            0 < jx < self.matriz.anchura
+            and 0 < jy < self.matriz.altura
+        ):
             if top_left and top_right and bottom_left and bottom_right:
                 return self._paint("█", pattern_color)
 
@@ -224,7 +258,9 @@ class ascii_renderer(Renderer):
             tr = self.is_blocked(jx, jy - 1)
             if tl != tr:
                 return True
-            return has_wall(jx - 1, jy - 1, Walls.este) or has_wall(jx, jy - 1, Walls.oeste)
+            return has_wall(jx - 1, jy - 1, Walls.este) or has_wall(
+                jx, jy - 1, Walls.oeste
+            )
 
         def has_vertical_south() -> bool:
             if jy == self.matriz.altura:
@@ -235,7 +271,9 @@ class ascii_renderer(Renderer):
             br = self.is_blocked(jx, jy)
             if bl != br:
                 return True
-            return has_wall(jx - 1, jy, Walls.este) or has_wall(jx, jy, Walls.oeste)
+            return has_wall(jx - 1, jy, Walls.este) or has_wall(
+                jx, jy, Walls.oeste
+            )
 
         def has_horizontal_west() -> bool:
             if jx == 0:
@@ -246,7 +284,9 @@ class ascii_renderer(Renderer):
             bl = self.is_blocked(jx - 1, jy)
             if tl != bl:
                 return True
-            return has_wall(jx - 1, jy - 1, Walls.sur) or has_wall(jx - 1, jy, Walls.norte)
+            return has_wall(jx - 1, jy - 1, Walls.sur) or has_wall(
+                jx - 1, jy, Walls.norte
+            )
 
         def has_horizontal_east() -> bool:
             if jx == self.matriz.anchura:
@@ -257,7 +297,9 @@ class ascii_renderer(Renderer):
             br = self.is_blocked(jx, jy)
             if tr != br:
                 return True
-            return has_wall(jx, jy - 1, Walls.sur) or has_wall(jx, jy, Walls.norte)
+            return has_wall(jx, jy - 1, Walls.sur) or has_wall(
+                jx, jy, Walls.norte
+            )
 
         north = has_vertical_north()
         south = has_vertical_south()
@@ -267,8 +309,14 @@ class ascii_renderer(Renderer):
         joint_char = self._get_joint(north, east, south, west)
         return self._paint(joint_char, self.wall_color.value)
 
-    def _get_joint(self, north: bool, east: bool, south: bool, west: bool) -> str:
-        """Mapea la presencia de muros conectados en las cuatro direcciones a un glifo Unicode."""
+    def _get_joint(
+        self,
+        north: bool,
+        east: bool,
+        south: bool,
+        west: bool,
+    ) -> str:
+        """Map connected walls in the four directions to one glyph."""
         connections = (north, east, south, west)
         joints = {
             (False, True, True, False): "┏",
@@ -290,5 +338,5 @@ class ascii_renderer(Renderer):
         return joints.get(connections, " ")
 
     def _paint(self, text: str, color: str) -> str:
-        """Aplica la secuencia ANSI del color especificado y resetea el formato al final."""
+        """Apply the ANSI color sequence and reset formatting at the end."""
         return f"{color}{text}{RESET}"

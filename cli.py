@@ -6,20 +6,19 @@ from ui.renderer.ascii_renderer import ascii_renderer
 
 
 def main() -> None:
-    """Punto de entrada interactivo para la generación y renderizado del laberinto.
+    """Interactive entry point for maze generation and rendering.
 
-    Carga los parámetros desde configuración/CLI, instancia el orquestador
-    (`MazeGenerator`) y ejecuta un bucle interactivo de consola para regenerar
-    tableros con semillas secuenciales, alternar la visualización del camino
-    más corto, rotar las paletas de color y persistir la salida en disco.
+    Loads the parameters from configuration/CLI, instantiates the orchestrator
+    (`MazeGenerator`), and runs a console loop to regenerate boards with
+    sequential seeds, toggle the shortest-path display, rotate color palettes,
+    and persist the output to disk.
     """
     config = process_config()
     if config is None:
         return
 
-    # Semilla por defecto si no se definió por CLI o archivo
+    # Default seed if it was not defined by CLI or config file
     current_seed = config.seed if config.seed is not None else 42
-
     maze_gen = MazeGenerator(
         width=config.width,
         height=config.height,
@@ -38,13 +37,13 @@ def main() -> None:
     )
 
     renderer.clear_screen()
-    print("Iniciando generación animada...")
+    print("Starting animated generation...")
     time.sleep(0.5)
     renderer.live_animation(maze_gen.generate(), path=None, delay=0.05)
-    print("\n¡Laberinto generado con éxito!")
+    print("\nMaze generated successfully!")
 
     path = maze_gen.solve_and_export()
-    print(f"Archivo exportado correctamente a: {config.output_file}")
+    print(f"File exported successfully to: {config.output_file}")
     show_path = False
 
     while True:
@@ -62,7 +61,10 @@ def main() -> None:
                 renderer.clear_screen()
                 current_seed += 1
 
-                # Reinstanciación completa para limpiar cuadrícula y estado interno
+                # Full re-instantiation to clear the grid and internal state
+                config = process_config()
+                if config is None:
+                    return
                 maze_gen = MazeGenerator(
                     width=config.width,
                     height=config.height,
@@ -74,7 +76,11 @@ def main() -> None:
                     perfect=config.perfect,
                 )
                 renderer.matriz = maze_gen.grid
-                renderer.live_animation(maze_gen.generate(), path=None, delay=0.05)
+                renderer.live_animation(
+                    maze_gen.generate(),
+                    path=None,
+                    delay=0.05,
+                )
 
                 path = maze_gen.solve_and_export()
                 show_path = False
@@ -93,9 +99,9 @@ def main() -> None:
 
             case "4":
                 renderer.clear_screen()
-                print("¡Hasta pronto!")
+                print("Goodbye!")
                 break
 
             case _:
                 renderer.clear_screen()
-                print("Opción no válida. Por favor introduce un número del 1 al 4.")
+                print("Invalid option. Please enter a number from 1 to 4.")

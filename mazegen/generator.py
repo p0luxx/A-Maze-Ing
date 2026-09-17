@@ -2,18 +2,20 @@ from typing import Generator
 
 from mazegen.encoder import MazeEncoder
 from mazegen.grid import Grid
-
-# from mazegen.strategies.prim import RandomizedPrimStrategy
 from mazegen.modes.playable import PlayableMode
 from mazegen.pattern42 import apply_pattern42
-from mazegen.strategies.backtracker import IterativeBacktrackerStrategy, Prim, RandomIterativeBacktrackerStrategy
+from mazegen.strategies.algorithms import (
+    IterativeBacktrackerStrategy,
+    Prim,
+    RandomIterativeBacktrackerStrategy,
+)
 from mazegen.strategies.base import GenerationStrategy
 
 from .solver import Solver
 
 
 class MazeGenerator:
-    """Orquestador principal para la generación y resolución de laberintos."""
+    """Main orchestrator for maze generation and resolution."""
 
     def __init__(
         self,
@@ -39,55 +41,60 @@ class MazeGenerator:
         self.check_parameters()
 
     def check_parameters(self) -> None:
-        """Valida los parámetros de configuración iniciales."""
+        """Validates the initial configuration parameters."""
         if self.width <= 0 or self.height <= 0:
-            raise ValueError("Las dimensiones deben ser mayores que cero.")
+            raise ValueError("Dimensions must be greater than zero.")
 
         ex, ey = self.entry
         if not (0 <= ex < self.width and 0 <= ey < self.height):
-            raise ValueError("La entrada está fuera de los límites de la cuadrícula.")
+            raise ValueError("The entry is outside the grid bounds.")
 
         ox, oy = self.end
         if not (0 <= ox < self.width and 0 <= oy < self.height):
-            raise ValueError("La salida está fuera de los límites de la cuadrícula.")
+            raise ValueError("The exit is outside the grid bounds.")
 
         if self.entry == self.end:
-            raise ValueError("La entrada y la salida no pueden ser la misma celda.")
+            raise ValueError("The entry and exit cannot be the same cell.")
 
     def _select_strategy(self) -> GenerationStrategy:
-        """Selecciona la estrategia de generación según el algoritmo indicado."""
-        if self.algorithm == "backtracker":
+        """Selects the generation strategy based on the requested algorithm."""
+        algo = self.algorithm
+        if algo == "backtracker":
             return IterativeBacktrackerStrategy()
-        elif self.algorithm == "prim":
-             return Prim()
-        elif self.algorithm =="rdfs":
+        elif algo == "prim":
+            return Prim()
+        elif algo == "rdfs":
             return RandomIterativeBacktrackerStrategy()
         else:
-            raise ValueError(f"Algoritmo desconocido: {self.algorithm}")
+            raise ValueError(f"Unknown algorithm: {self.algorithm}")
 
     def generate(self) -> Generator[tuple[int, int], None, None]:
         """
-        Orquesta el proceso de generación cediendo (yield) los pasos intermedios.
+        Orchestrates the generation process by yielding intermediate steps.
 
-        Permite a la interfaz de usuario consumir el generador para animaciones.
+        This allows the UI to consume the generator for animations.
         """
-        # 1. Aplicar máscara si aplica (ej. Pattern 42)
+        # 1. Apply the mask when applicable (e.g. Pattern 42)
         apply_pattern42(self.grid)
 
-        # 2. Ejecutar la estrategia de generación
+        # 2. Run the generation strategy
         strategy = self._select_strategy()
-        for step in strategy.generate(self.grid, seed=self.seed, start_gen=self.entry):
+        for step in strategy.generate(
+            self.grid,
+            seed=self.seed,
+            start_gen=self.entry,
+        ):
             yield step
 
-        # 3. Aplicar post-procesado según el modo (perfect vs playable)
+        # 3. Apply post-processing depending on the mode (perfect vs playable)
         if not self.perfect:
             PlayableMode.apply(self.grid, seed=self.seed)
 
     def solve_and_export(self) -> list[tuple[int, int]]:
-        """Resuelve el laberinto y guarda el resultado en el archivo especificado."""
-        # 1. Obtener la solución llamando al solver
+        """Solves the maze and saves the result to the specified file."""
+        # 1. Obtain the solution by calling the solver
         path = Solver.find_path(self.grid, self.entry, self.end)
-        # 2. Guardar llamando al encoder con argumentos explícitos
+        # 2. Save by calling the encoder with explicit arguments
         MazeEncoder.save_to_file(
             grid=self.grid,
             filepath=self.output_file,
@@ -96,4 +103,3 @@ class MazeGenerator:
             solution_path=path,
         )
         return path
-

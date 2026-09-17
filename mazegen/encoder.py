@@ -2,39 +2,40 @@ from mazegen.grid import Grid
 
 
 class MazeEncoder:
-    """Serializador de laberintos conforme a la especificación del subject.
+    """Maze serializer compliant with the subject specification.
 
-    Codifica el estado topológico de la cuadrícula en cadenas hexadecimales por
-    fila a partir de las máscaras de bits de cada celda, traduce la secuencia de
-    coordenadas de la solución a pasos cardinales (N, E, S, W) y persiste el mapa
-    en el formato de archivo de texto estructurado requerido.
+    It encodes the grid's topological state into row-by-row hexadecimal strings
+    derived from each cell's bitmasks, translates the solution's coordinate
+    sequence into cardinal steps (N, E, S, W), and persists the map in the
+    required structured text file format.
     """
 
     @staticmethod
     def cell_to_hex(cell_value: int) -> str:
-        """Convierte la máscara de bits entera de una celda en su dígito hexadecimal en minúscula.
+        """Convert a cell bitmask to its lowercase hexadecimal digit.
 
         Args:
-            cell_value: Valor entero (0 a 15) resultante de la combinación de banderas de muros.
+            cell_value: Integer value (0 to 15) from the combination of wall
+                flags.
 
         Returns:
-            Carácter hexadecimal individual ('0' a 'f').
+            A single hexadecimal character ('0' to 'f').
         """
         return f"{cell_value:x}"
 
     @classmethod
     def encode_grid(cls, grid: Grid) -> list[str]:
-        """Serializa la matriz de celdas en una lista de cadenas de texto, una por fila.
+        """Serialize the grid into a list of text rows, one per row.
 
-        Recorre el tablero de arriba a abajo e izquierda a derecha extrayendo el
-        valor entero de la propiedad `lista` de cada celda para formatearlo en hexadecimal.
+        Iterates from top to bottom and left to right, extracts the integer
+        value from each cell's `lista` property, and formats it as hexadecimal.
 
         Args:
-            grid: Instancia de la cuadrícula a codificar.
+            grid: Instance of the grid to be encoded.
 
         Returns:
-            Lista de líneas de texto donde cada carácter representa la configuración
-            de muros de una celda.
+            A list of text lines where each character represents a cell's wall
+            configuration.
         """
         lines = []
         for y in range(grid.altura):
@@ -47,17 +48,18 @@ class MazeEncoder:
 
     @staticmethod
     def path_to_directions(path: list[tuple[int, int]]) -> str:
-        """Traduce una lista ordenada de coordenadas contiguas a una cadena de pasos cardinales.
+        """Translate a path into a cardinal-direction string.
 
-        Compara pares sucesivos `(x1, y1)` y `(x2, y2)` para inferir el vector
-        de movimiento unitario y convertirlo a caracteres 'N', 'E', 'S' o 'W'.
+        Compares successive pairs `(x1, y1)` and `(x2, y2)` to infer the unit
+        movement vector and convert it into 'N', 'E', 'S', or 'W'.
 
         Args:
-            path: Lista secuencial de tuplas `(x, y)` que representan la ruta óptima.
+            path: A sequential list of `(x, y)` tuples representing the optimal
+                path.
 
         Returns:
-            Cadena de caracteres cardinales (e.g., "EESSNNW"). Devuelve una cadena
-            vacía si la ruta tiene menos de dos nodos.
+            A string of cardinal characters (e.g., "EESSNNW"). Returns an empty
+            string if the path contains fewer than two nodes.
         """
         directions = []
         for i in range(len(path) - 1):
@@ -82,33 +84,38 @@ class MazeEncoder:
         end: tuple[int, int],
         solution_path: list[tuple[int, int]] | None = None,
     ) -> None:
-        """Guarda la representación canónica del laberinto en el sistema de archivos.
+        """Save the canonical maze representation to disk.
 
-        Escribe el fichero siguiendo la estructura estricta del proyecto:
-        1. Filas hexadecimales del tablero.
-        2. Línea en blanco obligatoria como separador.
-        3. Coordenadas de entrada `x,y`.
-        4. Coordenadas de salida `x,y`.
-        5. Cadena de direcciones cardinales de la ruta resuelta (o salto de línea si no existe).
+        Writes the file following the project's strict structure:
+        1. Hexadecimal rows of the grid.
+        2. Mandatory blank line as a separator.
+        3. Entry coordinates `x,y`.
+        4. Exit coordinates `x,y`.
+        5. String of cardinal directions for the solved path, or a newline if
+           none exists.
 
         Args:
-            grid: Tablero con la configuración de muros definitiva.
-            filepath: Ruta de destino del archivo a escribir.
-            entry: Coordenadas `(x, y)` del punto de partida.
-            end: Coordenadas `(x, y)` del punto de llegada.
-            solution_path: Lista ordenada opcional con la solución calculada por el solver.
+            grid: Grid with the final wall configuration.
+            filepath: Destination path for the file to be written.
+            entry: `(x, y)` coordinates of the starting point.
+            end: `(x, y)` coordinates of the ending point.
+            solution_path: Optional ordered list containing the solution
+                calculated by the solver.
         """
         hex_lines = cls.encode_grid(grid)
-        with open(filepath, "w", encoding="utf-8") as f:
-            for line in hex_lines:
-                f.write(line + "\n")
+        try:
+            with open(filepath, "w", encoding="utf-8") as f:
+                for line in hex_lines:
+                    f.write(line + "\n")
 
-            f.write("\n")
-            f.write(f"{entry[0]},{entry[1]}\n")
-            f.write(f"{end[0]},{end[1]}\n")
-
-            if solution_path:
-                dirs = cls.path_to_directions(solution_path)
-                f.write(dirs + "\n")
-            else:
                 f.write("\n")
+                f.write(f"{entry[0]},{entry[1]}\n")
+                f.write(f"{end[0]},{end[1]}\n")
+
+                if solution_path:
+                    dirs = cls.path_to_directions(solution_path)
+                    f.write(dirs + "\n")
+                else:
+                    f.write("\n")
+        except PermissionError as e:
+            print(f"Error detected: {e}")
