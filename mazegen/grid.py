@@ -29,7 +29,7 @@ class Cell():
             lista: Bitmask containing the active walls of the cell.
             blocked: Indicates whether the cell is blocked.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize a cell with all walls closed and unblocked."""
         self.lista = Walls(15)
         self.blocked = False
