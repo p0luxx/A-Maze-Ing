@@ -10,6 +10,17 @@ class ConfigError(Exception):
 
 
 class Algorithm(str, Enum):
+    """Represent the supported maze generation algorithms.
+
+    Define the valid algorithm identifiers that can be selected from
+    configuration data and mapped to their corresponding generation
+    strategies.
+
+    Attributes:
+        PRIM: Identifier for the Prim generation strategy.
+        RDFS: Identifier for the randomized depth-first strategy.
+        BACKTRACKER: Identifier for the iterative backtracking strategy.
+    """
     PRIM = "PRIM"
     RDFS = "RDFS"
     BACKTRACKER = "BACKTRACKER"
