@@ -62,7 +62,6 @@ def main() -> None:
                     renderer.clear_screen()
                     current_seed += 1
 
-                    # Full re-instantiation to clear the grid and internal state
                     config = process_config()
                     if config is None:
                         return
