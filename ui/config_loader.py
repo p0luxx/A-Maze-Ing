@@ -1,7 +1,6 @@
 from enum import Enum
 from sys import argv
 
-from mypyc import lower
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
 
