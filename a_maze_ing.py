@@ -7,5 +7,3 @@ if __name__ == "__main__":
         print("Error: KeyBoardInterrupt")
     except EOFError as e:
         print(f"Error: EndOfFileError {e}")
-    except ValueError as e:
-        print(f"Value error: {e}")

@@ -16,6 +16,17 @@ classifiers = [
   "Programming Language :: Python :: 3",
   "Operating System :: OS Independent",
 ]
+dependencies = [
+  "pydantic>=2,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "flake8",
+  "mypy",
+  "pytest",
+  "build"
+]
 
 [tool.setuptools.packages.find]
 include = ["mazegen*"]
