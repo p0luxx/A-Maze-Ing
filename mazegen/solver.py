@@ -4,16 +4,30 @@ from mazegen.grid import Grid, Walls
 
 
 class Solver:
-    """Implements pathfinding algorithms for Grid matrices."""
+    """Find paths between cells in a maze grid.
+
+    Provide pathfinding operations over a Grid while respecting the
+    walls that define which neighbouring cells can be reached.
+    """
 
     @staticmethod
     def find_path(
         grid: Grid, entry: tuple[int, int], end: tuple[int, int]
     ) -> list[tuple[int, int]]:
-        """
-        Finds the path from entry to end using BFS.
-        Returns a list of coordinates from the start to the finish,
-        or an empty list if no solution exists.
+        """Find a path between two grid positions using breadth-first search.
+
+        Traverse accessible neighbouring cells while respecting the walls
+        of each cell. Track the origin of every visited position so the
+        path can be reconstructed once the destination is reached.
+
+        Args:
+            grid: Grid containing the maze structure to traverse.
+            entry: Coordinates of the starting cell as an (x, y) tuple.
+            end: Coordinates of the destination cell as an (x, y) tuple.
+
+        Returns:
+            A list of coordinates from entry to end, or an empty list if
+            no valid path exists.
         """
         # deque is more efficient O(1) than list O(n)
         # for front pops.
@@ -59,7 +73,20 @@ class Solver:
         came_from: dict[tuple[int, int], tuple[int, int] | None],
         current: tuple[int, int],
     ) -> list[tuple[int, int]]:
-        """Rebuilds the path from the end back to the start and reverses it."""
+        """Reconstruct a path from the destination back to the start.
+
+        Follow the recorded previous position for each visited cell until
+        reaching the starting cell, then reverse the collected coordinates
+        so the path is returned in traversal order.
+
+        Args:
+            came_from: Mapping of each visited cell to the cell it came from.
+            current: Coordinates of the destination cell.
+
+        Returns:
+            A list of coordinates ordered from the start cell to the
+            destination cell.
+        """
         path: list[tuple[int, int]] = []
         # Continue while the current value is not None (the start cell)
         while current is not None:
